@@ -1,10 +1,10 @@
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import MOCK_DATA from "./MOCK_DATA.json";
-import { COLUMNS, COLUMNSS } from "./columns";
+import { COLUMNS, COLUMNS_GROUP, COLUMNSS } from "./columns";
 import { useMemo } from "react";
 
 const BasicTable = () => {
-  const columns = useMemo(() => COLUMNSS, []);
+  const columns = useMemo(() => COLUMNS_GROUP, []);
   const data = useMemo(() => MOCK_DATA, []);
 
   const {
@@ -23,7 +23,7 @@ const BasicTable = () => {
         {getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <th key={header.id}>
+              <th key={header.id} colSpan={header.colSpan}>
                 {header.isPlaceholder ? null : flexRender(
                   header.column.columnDef.header,
                   header.getContext()
@@ -50,9 +50,9 @@ const BasicTable = () => {
       </tbody>
       <tfoot>
         {getFooterGroups().map((footerGroup) => (
-          <tr key={footerGroup.id}>
+          <tr key={footerGroup.id} >
             {footerGroup.headers.map((header) => (
-              <td key={header.id}>
+              <td key={header.id} colSpan={header.colSpan}>
                 {flexRender(
                   header.column.columnDef.footer, 
                   header.getContext()

@@ -1,6 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
 
-type columns ={
+export type columns ={
     id: number;
     first_name: string;
     last_name: string;
@@ -11,61 +11,102 @@ type columns ={
     phone: string;
 }
 
-const columsHelper = createColumnHelper<columns>()
+const columHelper = createColumnHelper<columns>()
 
+
+
+// Columns in Tanstack-table way
 export const COLUMNSS = [
-columsHelper.accessor('id' ,{
+columHelper.accessor('id' ,{
     cell: info => info.getValue(),
     footer : info => info.column.id
 }),
 
-columsHelper.accessor('first_name' ,{
+columHelper.accessor('first_name' ,{
     cell: info => info.getValue(),
     footer : info => info.column.id
 }),
-columsHelper.accessor('last_name' ,{
+columHelper.accessor('last_name' ,{
     cell: info => info.getValue(),
     footer : info => info.column.id
 }),
-columsHelper.accessor('date_of_birth' ,{
+columHelper.accessor('date_of_birth' ,{
     cell: info => info.getValue(),
     footer : info => info.column.id
 }),
-columsHelper.accessor('country' ,{
+columHelper.accessor('country' ,{
     cell: info => info.getValue(),
     footer : info => info.column.id
 }),
-columsHelper.accessor('phone' ,{
+columHelper.accessor('phone' ,{
     cell: info => info.getValue(),
     footer : info => info.column.id
 }),
 
 ]
 
+//Header Group Columns
+export const COLUMNS_GROUP =[
+    columHelper.group({
+        id:"id",
+        header: () => 'ID',
+        columns:[
+            COLUMNSS[0],
+            
+        ]
+    }),
+    columHelper.group({
+        id: 'name',
+        header: 'Name',
+        columns:[
+            COLUMNSS[1],
+            COLUMNSS[2],
+        ]
+    }),
+    columHelper.group({
+        id : 'info',
+        header: 'Info',
+        columns:[
+            COLUMNSS[3],
+            COLUMNSS[4],
+            COLUMNSS[5],
+        ]
+    }),
+]
 
+
+
+// Columns in Defalut way way
 export const COLUMNS = [
     {
         header : 'id',
+        footer : 'id',
         accessorKey : 'id',
+        
     },
     {
         header : 'First Name',
+        footer : 'First Name',
         accessorKey : 'first_name',
     },
     {
         header : 'Last Name',
+        footer : 'Last Name',
         accessorKey : 'last_name',
     },
     {
         header : 'Date of Birth',
+        footer : 'Date of Birth',
         accessorKey : 'date_of_birth',
     },
     {
         header : 'Country',
+        footer : 'Country',
         accessorKey : 'country',
     },
     {
         header : 'Phone',
+        footer : 'Phone',
         accessorKey : 'phone',
     },
 ]
