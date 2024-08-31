@@ -110,3 +110,50 @@ export const COLUMNS = [
         accessorKey : 'phone',
     },
 ]
+
+// Header Group Columns in Defalut way 
+
+    export const COLUMNS_GROUP_DEFAULT =[
+        {
+            header : 'id',
+        footer : 'id',
+        accessorKey : 'id',
+        },
+        {
+            header: 'Name',
+            footer: 'Name',
+            columns:[
+                {
+                    header : 'First Name',
+                    footer : 'First Name',
+                    accessorKey : 'first_name',
+                },
+                {
+                    header : 'Last Name',
+                    footer : 'Last Name',
+                    accessorKey : 'last_name',
+                },
+            ]
+        },
+        {
+            header: 'Info',
+            footer: 'Info',
+            columns:[
+                {
+                    header : 'Date of Birth',
+                    footer : 'Date of Birth',
+                    accessorKey : 'date_of_birth',
+                },
+                {
+                    header : 'Country',
+                    footer : 'Country',
+                    accessorKey : 'country',
+                },
+                {
+                    header : 'Phone',
+                    footer : 'Phone',
+                    accessorKey : 'phone',
+                },
+            ]
+        }
+    ]
