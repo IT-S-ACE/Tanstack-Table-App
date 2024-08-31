@@ -1,10 +1,10 @@
-import { flexRender, getCoreRowModel, getSortedRowModel, sortingFns, useReactTable } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getSortedRowModel, sortingFns, SortingState, useReactTable } from "@tanstack/react-table";
 import MOCK_DATA from "./MOCK_DATA.json";
 import { COLUMNSS } from "./columns";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Icon } from "@chakra-ui/react";
 import SortIcon from './icons/SortIcon.tsx'
-import { FaArrowUp, FaArrowDown } from "react-icons/fa"; 
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 //custom sorting logic for one of our enum columns
 // const sort
@@ -13,21 +13,41 @@ const SortingTable = () => {
     const columns = useMemo(() => COLUMNSS, []);
     const data = useMemo(() => MOCK_DATA, []);
 
+    const [sorting, setSorting] = useState<SortingState>([])
+
     const {
         getHeaderGroups,
         getRowModel,
         getFooterGroups,
-        
+
         getState, // Add getState to access sorting state
     } = useReactTable({
         columns,
         data,
         getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
+        getSortedRowModel: getSortedRowModel(), //client-side sorting
+        onSortingChange: setSorting,
+        // sortingFns: {
+        //   sortStatusFn, //or provide our custom sorting function globally for all columns to be able to use
+        // },
+        //no need to pass pageCount or rowCount with client-side pagination as it is calculated automatically
+        state: {
+            sorting,
+        },
+        // autoResetPageIndex: false, // turn off page index reset when sorting or filtering - default on/true
+        // enableMultiSort: false, //Don't allow shift key to sort multiple columns - default on/true
+        // enableSorting: false, // - default on/true
+        // enableSortingRemoval: false, //Don't allow - default on/true
+        // isMultiSortEvent: (e) => true, //Make all clicks multi-sort - default requires `shift` key
+        // maxMultiSortColCount: 3, // only allow 3 columns to be sorted at once - default is Infinity
     });
 
+    //(Method 1)
+    // const sortingState = getState().sorting // Get the sorting state
 
-    const sortingState = getState().sorting // Get the sorting state
+    //access sorting state from the table instance
+    console.log(getState().sorting)
+
 
     return (
         <table>
@@ -35,27 +55,78 @@ const SortingTable = () => {
                 {getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id}>
                         {headerGroup.headers.map((header) => {
-                            const sortedColumn = sortingState.find(sort => sort.id === header.column.id);
-                            const isSorted = sortedColumn !== undefined;
-                            const sortDirection = sortedColumn ? sortedColumn.desc : undefined
-
                             return (
-                            <th key={header.id} colSpan={header.colSpan} 
-                            onClick={header.column.getToggleSortingHandler()}>
-                                {header.isPlaceholder ? null : flexRender(
-                                    header.column.columnDef.header,
-                                    header.getContext()
-                                )}
-                                {
-                                    header.column.getCanSort() && <Icon 
-                                    as={isSorted ? (sortDirection ? FaArrowDown : FaArrowUp): SortIcon}
-                                    mx={3} 
-                                    fontSize={14} 
-                                    />
-                                }
-                            </th>
-                            )})}
+                                <th key={header.id} colSpan={header.colSpan}
+                                >
+                                    {header.isPlaceholder ? null : (
+                                        <div
+                                            className={
+                                                header.column.getCanSort() ?
+                                                    'cursor-pointer select-none' :
+                                                    ''
+                                            }
+                                            onClick={header.column.getToggleSortingHandler()}
+                                            title={
+                                                header.column.getCanSort() ?
+                                                    header.column.getNextSortingOrder() === 'asc' ? 'Sort ascending' :
+                                                        header.column.getNextSortingOrder() === 'desc' ? 'Sort descending' : 'Clear sort' : undefined
+                                            }
+                                        >
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                            {/* ChatGPT way */}
+                                            {
+                                                header.column.getIsSorted() === 'asc' ? (
+                                                    <FaArrowUp style={{ marginLeft: '8px' }} />
+                                                ) : header.column.getIsSorted() === 'desc' ? (
+                                                    <FaArrowDown style={{ marginLeft: '8px' }} />
+                                                ) : '<>'
+                                                // (<SortIcon style={{ marginLeft: '8px' }} />)
+                                            }
+                                            {/* another icon way */}
+                                            {/* {{
+                                                asc: (<FaArrowUp style={{marginLeft: '8px'}}/>),
+                                                desc: (<FaArrowDown style={{marginLeft: '8px'}}/>),
+                                            }[header.column.getIsSorted() as string] ?? null} */}
+
+                                            {/* Tanstack way */}
+                                            {/* {{
+                                                asc: ' 🔼',
+                                                desc: ' 🔽',
+                                            }[header.column.getIsSorted() as string] ?? null} */}
+                                        </div>
+                                    )
+                                    }
+                                </th>
+                            )
+                        })}
                     </tr>
+
+                    // (Method 1)
+                    //     <tr key={headerGroup.id}>
+                    //     {headerGroup.headers.map((header) => {
+                    //         const sortedColumn = sortingState.find(sort => sort.id === header.column.id);
+                    //         const isSorted = sortedColumn !== undefined;
+                    //         const sortDirection = sortedColumn ? sortedColumn.desc : undefined
+                    //         return (
+                    //         <th key={header.id} colSpan={header.colSpan} 
+                    //         onClick={header.column.getToggleSortingHandler()}>
+                    //             {header.isPlaceholder ? null : flexRender(
+                    //                 header.column.columnDef.header,
+                    //                 header.getContext()
+                    //             )}
+                    //             {
+                    //                 header.column.getCanSort() && <Icon 
+                    //                 as={isSorted ? (sortDirection ? FaArrowDown : FaArrowUp): SortIcon}
+                    //                 mx={3} 
+                    //                 fontSize={14} 
+                    //                 />
+                    //             }
+                    //         </th>
+                    //         )})}
+                    // </tr>
                 ))}
             </thead>
 
