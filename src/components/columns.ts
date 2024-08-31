@@ -1,4 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
+import { format } from "date-fns";
 
 export type columns ={
     id: number;
@@ -31,7 +32,7 @@ columHelper.accessor('last_name' ,{
     footer : info => info.column.id
 }),
 columHelper.accessor('date_of_birth' ,{
-    cell: info => info.getValue(),
+    cell: info => {return format (new Date(info.getValue()) , 'dd/MM/yyyy')},
     footer : info => info.column.id
 }),
 columHelper.accessor('country' ,{
